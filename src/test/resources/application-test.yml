@@ -1,0 +1,22 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/savoria_test_db
+      auto-index-creation: false
+
+app:
+  jwt:
+    secret: 4c9b2a7e58df13b69204cd76e01a938b7e289f815049c37e6da8015cf12948b2
+    access-token-expiration-ms: 3600000
+    refresh-token-expiration-ms: 604800000
+  cors:
+    allowed-origins: http://localhost:5173
+    allowed-methods: GET,POST,PUT,PATCH,DELETE,OPTIONS
+    allowed-headers: Authorization,Content-Type
+    allow-credentials: true
+    max-age: 3600
+
+razorpay:
+  key-id: rzp_test_dummy
+  key-secret: rzp_secret_dummy
+  webhook-secret: rzp_webhook_dummy

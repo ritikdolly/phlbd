@@ -1,0 +1,391 @@
+{
+  "info": {
+    "name": "Savoria Restaurant Platform API",
+    "description": "Complete REST API collection for Savoria Restaurant Platform including RBAC (Owner, Staff, Delivery Personnel, Customer), Razorpay payments, Cart & Order lifecycle.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "ownerToken", "value": "" },
+    { "key": "staffToken", "value": "" },
+    { "key": "deliveryToken", "value": "" },
+    { "key": "customerToken", "value": "" },
+    { "key": "orderId", "value": "662700000000000000000001" },
+    { "key": "orderNumber", "value": "SAV-20261029-XXXX" },
+    { "key": "foodItemId", "value": "662700000000000000000002" },
+    { "key": "addressId", "value": "addr-default-1" },
+    { "key": "assignmentId", "value": "662700000000000000000003" },
+    { "key": "deliveryManId", "value": "662700000000000000000004" }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Login - Owner",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"owner@savoria.in\",\n  \"password\": \"Owner@123456\"\n}"
+            },
+            "url": "{{baseUrl}}/api/auth/login"
+          }
+        },
+        {
+          "name": "Login - Staff",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"staff@savoria.in\",\n  \"password\": \"Staff@123456\"\n}"
+            },
+            "url": "{{baseUrl}}/api/auth/login"
+          }
+        },
+        {
+          "name": "Login - Delivery Personnel",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"delivery@savoria.in\",\n  \"password\": \"Delivery@123456\"\n}"
+            },
+            "url": "{{baseUrl}}/api/auth/login"
+          }
+        },
+        {
+          "name": "Login - Customer",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"arjun@example.com\",\n  \"password\": \"Customer@123456\"\n}"
+            },
+            "url": "{{baseUrl}}/api/auth/login"
+          }
+        },
+        {
+          "name": "Register Customer",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Pooja Sharma\",\n  \"email\": \"pooja@example.com\",\n  \"password\": \"Password@123\",\n  \"phone\": \"+91 9988776655\"\n}"
+            },
+            "url": "{{baseUrl}}/api/auth/register"
+          }
+        },
+        {
+          "name": "Get Current User Profile",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{customerToken}}" }],
+            "url": "{{baseUrl}}/api/auth/me"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Public Menu & Categories",
+      "item": [
+        {
+          "name": "Get All Categories",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/categories"
+          }
+        },
+        {
+          "name": "Get All Menu Items",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/menu"
+          }
+        },
+        {
+          "name": "Get Menu Items by Category (starters)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/menu/category/starters"
+          }
+        },
+        {
+          "name": "Search Menu Items",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/menu/search?query=kebab"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Customer Cart",
+      "item": [
+        {
+          "name": "Get Cart",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{customerToken}}" }],
+            "url": "{{baseUrl}}/api/cart"
+          }
+        },
+        {
+          "name": "Add Item to Cart",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{customerToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"foodItemId\": \"{{foodItemId}}\",\n  \"quantity\": 2,\n  \"selectedCustomizations\": \"{\\\"Spice Level\\\": \\\"Medium\\\"}\"\n}"
+            },
+            "url": "{{baseUrl}}/api/cart/items"
+          }
+        },
+        {
+          "name": "Clear Cart",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{customerToken}}" }],
+            "url": "{{baseUrl}}/api/cart/clear"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Orders & Checkout",
+      "item": [
+        {
+          "name": "Checkout Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{customerToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"addressId\": \"{{addressId}}\",\n  \"paymentMethod\": \"RAZORPAY\",\n  \"couponCode\": \"SAVORIA50\",\n  \"deliveryInstructions\": \"Please leave at door and ring bell\"\n}"
+            },
+            "url": "{{baseUrl}}/api/orders/checkout"
+          }
+        },
+        {
+          "name": "My Orders History",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{customerToken}}" }],
+            "url": "{{baseUrl}}/api/orders/my-orders?page=0&size=10"
+          }
+        },
+        {
+          "name": "Track Order by Order Number",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{customerToken}}" }],
+            "url": "{{baseUrl}}/api/orders/track/{{orderNumber}}"
+          }
+        },
+        {
+          "name": "Cancel Order (Eligible before preparation)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{customerToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Changed my dinner plans\"\n}"
+            },
+            "url": "{{baseUrl}}/api/orders/{{orderId}}/cancel"
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Staff Operations",
+      "item": [
+        {
+          "name": "Staff Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{staffToken}}" }],
+            "url": "{{baseUrl}}/api/staff/dashboard"
+          }
+        },
+        {
+          "name": "Incoming Orders",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{staffToken}}" }],
+            "url": "{{baseUrl}}/api/staff/orders/incoming"
+          }
+        },
+        {
+          "name": "Accept Order",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{staffToken}}" }],
+            "url": "{{baseUrl}}/api/staff/orders/{{orderId}}/accept"
+          }
+        },
+        {
+          "name": "Start Preparing Order",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{staffToken}}" }],
+            "url": "{{baseUrl}}/api/staff/orders/{{orderId}}/prepare"
+          }
+        },
+        {
+          "name": "Mark Order Ready for Pickup",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{staffToken}}" }],
+            "url": "{{baseUrl}}/api/staff/orders/{{orderId}}/ready"
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Delivery Operations",
+      "item": [
+        {
+          "name": "Active Assignments",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{deliveryToken}}" }],
+            "url": "{{baseUrl}}/api/delivery/assignments/active"
+          }
+        },
+        {
+          "name": "Update Status - Picked Up",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{deliveryToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"PICKED_UP\",\n  \"notes\": \"Picked up warm from kitchen\"\n}"
+            },
+            "url": "{{baseUrl}}/api/delivery/assignments/{{assignmentId}}/status"
+          }
+        },
+        {
+          "name": "Update Status - Delivered",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{deliveryToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"DELIVERED\",\n  \"notes\": \"Delivered directly to customer hands\"\n}"
+            },
+            "url": "{{baseUrl}}/api/delivery/assignments/{{assignmentId}}/status"
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Owner Administration",
+      "item": [
+        {
+          "name": "Owner Dashboard Analytics",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{ownerToken}}" }],
+            "url": "{{baseUrl}}/api/owner/dashboard"
+          }
+        },
+        {
+          "name": "Sales Report",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{ownerToken}}" }],
+            "url": "{{baseUrl}}/api/owner/reports/sales?period=monthly"
+          }
+        },
+        {
+          "name": "List Staff Accounts",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{ownerToken}}" }],
+            "url": "{{baseUrl}}/api/owner/staff"
+          }
+        },
+        {
+          "name": "Assign Delivery Driver",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{ownerToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": \"{{orderId}}\",\n  \"deliveryManId\": \"{{deliveryManId}}\",\n  \"notes\": \"Priority express delivery\"\n}"
+            },
+            "url": "{{baseUrl}}/api/owner/orders/assign-delivery"
+          }
+        },
+        {
+          "name": "Get Restaurant Settings",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{ownerToken}}" }],
+            "url": "{{baseUrl}}/api/owner/settings"
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Razorpay Payments",
+      "item": [
+        {
+          "name": "Create Razorpay Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{customerToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": \"{{orderId}}\"\n}"
+            },
+            "url": "{{baseUrl}}/api/payments/create-razorpay-order"
+          }
+        },
+        {
+          "name": "Verify Razorpay Payment Signature",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{customerToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": \"{{orderId}}\",\n  \"razorpayOrderId\": \"order_mock_12345678\",\n  \"razorpayPaymentId\": \"pay_mock_12345678\",\n  \"razorpaySignature\": \"sig_mock_12345678\"\n}"
+            },
+            "url": "{{baseUrl}}/api/payments/verify"
+          }
+        }
+      ]
+    }
+  ]
+}
+

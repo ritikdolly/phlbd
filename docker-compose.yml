@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  mongo-db:
+    image: mongo:7.0
+    container_name: savoria-mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - savoria-network
+
+  backend-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: savoria-backend
+    restart: on-failure
+    depends_on:
+      - mongo-db
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongo-db:27017/savoria_db
+      JWT_SECRET: 4c9b2a7e58df13b69204cd76e01a938b7e289f815049c37e6da8015cf12948b2
+      CORS_ALLOWED_ORIGINS: http://localhost:5173,http://localhost:3000
+      RAZORPAY_KEY_ID: rzp_test_placeholder_key_id
+      RAZORPAY_KEY_SECRET: rzp_test_placeholder_key_secret
+      RAZORPAY_WEBHOOK_SECRET: rzp_test_placeholder_webhook_secret
+    ports:
+      - "8080:8080"
+    networks:
+      - savoria-network
+
+volumes:
+  mongo_data:
+
+networks:
+  savoria-network:
+    driver: bridge

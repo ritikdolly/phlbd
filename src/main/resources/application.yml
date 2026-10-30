@@ -1,0 +1,46 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: savoria-restaurant-backend
+
+  data:
+    mongodb:
+      uri: ${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/savoria_db}
+      auto-index-creation: true
+
+  mvc:
+    problemdetails:
+      enabled: true
+
+# Security & JWT Configuration
+app:
+  jwt:
+    # 256-bit HS256 Secret Key (in production, provide via JWT_SECRET env var)
+    secret: ${JWT_SECRET:4c9b2a7e58df13b69204cd76e01a938b7e289f815049c37e6da8015cf12948b2}
+    access-token-expiration-ms: 3600000 # 1 hour
+    refresh-token-expiration-ms: 604800000 # 7 days
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173}
+    allowed-methods: GET,POST,PUT,PATCH,DELETE,OPTIONS
+    allowed-headers: Authorization,Content-Type,X-Requested-With,Accept,Origin,Access-Control-Request-Method,Access-Control-Request-Headers
+    allow-credentials: true
+    max-age: 3600
+
+# Razorpay Payment Gateway Configuration
+razorpay:
+  key-id: ${RAZORPAY_KEY_ID:rzp_test_placeholder_key_id}
+  key-secret: ${RAZORPAY_KEY_SECRET:rzp_test_placeholder_key_secret}
+  webhook-secret: ${RAZORPAY_WEBHOOK_SECRET:rzp_test_placeholder_webhook_secret}
+
+# Swagger OpenAPI Documentation
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
